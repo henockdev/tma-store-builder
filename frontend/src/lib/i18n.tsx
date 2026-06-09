@@ -12,13 +12,20 @@ import en from "@/locales/en.json";
 import am from "@/locales/am.json";
 
 export type Locale = "en" | "am";
-type Dict = Record<string, string>;
-const dictionaries: Record<Locale, Dict> = { en, am };
+
+// Extract the type of our translations directly from the JSON keys
+type TranslationKeys = keyof typeof en;
+
+// Enforce that both English and Amharic dictionaries strictly share the same structural keys
+const dictionaries: Record<Locale, Record<TranslationKeys, string>> = { 
+  en, 
+  am: am as Record<TranslationKeys, string> 
+};
 
 type I18nContextValue = {
   locale: Locale;
   setLocale: (l: Locale) => void;
-  t: (key: keyof typeof en) => string;
+  t: (key: TranslationKeys) => string;
   dir: "ltr";
 };
 
@@ -50,10 +57,14 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<I18nContextValue>(() => {
     const dict = dictionaries[locale] || dictionaries.en;
+    
     return {
       locale,
       setLocale,
-      t: (key) => dict[key as string] ?? (en[key as string] ?? String(key)),
+      t: (key: TranslationKeys) => {
+        // Safe lookup: falls back to English value, then falls back to the key itself
+        return dict[key] ?? en[key] ?? String(key);
+      },
       dir: "ltr",
     };
   }, [locale]);
