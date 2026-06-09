@@ -1,15 +1,19 @@
 "use client";
 
+// This directive forces the page to be rendered on the client, 
+// bypassing static build-time errors with useSearchParams()
+export const dynamic = "force-dynamic";
+
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { hapticError, hapticSuccess } from "@/lib/telegram";
 
-// Internal form component wrapped in Suspense to prevent build-time prerender bailout
 function MerchantAuthForm() {
   const router = useRouter();
   const search = useSearchParams();
+  // Safe access to search params
   const initialMode = search?.get("signup") ? "signup" : "signin";
   const [mode, setMode] = useState<"signin" | "signup">(initialMode);
 
@@ -36,6 +40,7 @@ function MerchantAuthForm() {
       const res = mode === "signin"
         ? await api.loginMerchant({ email, password })
         : await api.registerMerchant({ email, password, store_name: storeName, description, phone, language });
+      
       localStorage.setItem("merchant_token", res.token);
       localStorage.setItem("merchant_slug", res.merchant.slug);
       hapticSuccess();
@@ -112,6 +117,7 @@ function MerchantAuthForm() {
 
       <div className="divider-gold my-5" />
       <button
+        type="button"
         onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
         className="text-sm text-white/60 hover:text-gold-200 w-full text-center"
       >
@@ -121,7 +127,6 @@ function MerchantAuthForm() {
   );
 }
 
-// Main page component providing safe fallback architecture during Vercel's static phase
 export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 max-w-md mx-auto">
