@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html, body {
+    background: #000000;
+    color: #f5f5f5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior-y: none;
+  }
+
+  body {
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, rgba(170, 119, 28, 0.06) 0%, transparent 50%),
+      #000000;
+    min-height: 100vh;
+    font-family: var(--font-sans, "Inter"), system-ui, sans-serif;
+  }
+
+  [lang="am"], .font-amharic {
+    font-family: "Noto Sans Ethiopic", "Nyala", "Roboto", "Inter", sans-serif;
+    letter-spacing: -0.005em;
+  }
+
+  /* Hide scrollbars on mobile webapp for a native feel */
+  ::-webkit-scrollbar { width: 0; height: 0; }
+}
+
+@layer components {
+  .lux-card {
+    @apply bg-midnight-800/70 backdrop-blur-md border border-gold-300/10 rounded-2xl;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold text-midnight-950 transition-all duration-200;
+    background: linear-gradient(135deg, #D4AF37 0%, #F4E9C0 50%, #AA771C 100%);
+    background-size: 200% 200%;
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
+  }
+  .btn-gold:hover { background-position: 100% 100%; transform: translateY(-1px); }
+  .btn-gold:active { transform: translateY(0); }
+  .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-medium text-gold-200 border border-gold-300/30 transition-all duration-200;
+    background: rgba(212, 175, 55, 0.04);
+  }
+  .btn-ghost:hover { background: rgba(212, 175, 55, 0.1); border-color: rgba(212, 175, 55, 0.5); }
+
+  .input-lux {
+    @apply w-full px-4 py-3 bg-midnight-900/80 border border-gold-300/15 rounded-xl text-white placeholder:text-white/30 focus:outline-none focus:border-gold-300/60 focus:ring-2 focus:ring-gold-300/20 transition-all duration-200;
+  }
+
+  .chip {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  .chip-gold { @apply chip bg-gold-300/10 text-gold-200 border border-gold-300/20; }
+  .chip-mute { @apply chip bg-white/5 text-white/60 border border-white/10; }
+  .chip-green { @apply chip bg-emerald-500/10 text-emerald-300 border border-emerald-400/20; }
+  .chip-amber { @apply chip bg-amber-500/10 text-amber-300 border border-amber-400/20; }
+
+  .divider-gold {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.4), transparent);
+  }
+
+  .skeleton-gold {
+    background: linear-gradient(90deg, #161821 0%, #2A2D40 50%, #161821 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
+  }
+
+  .gold-text {
+    background: linear-gradient(135deg, #F4E9C0 0%, #D4AF37 50%, #AA771C 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+@layer utilities {
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .safe-top { padding-top: env(safe-area-inset-top); }
+  .no-tap { -webkit-tap-highlight-color: transparent; }
+}
