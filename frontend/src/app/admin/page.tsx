@@ -5,6 +5,7 @@ import Link from "next/link";
 import { api, type Stats } from "@/lib/api";
 import { useI18n } from "@/lib/i18n";
 import { formatETB } from "@/lib/format";
+import { hapticSuccess, haptic } from "@/lib/telegram";
 
 export default function AdminDashboard() {
   const { t, locale } = useI18n();
@@ -24,6 +25,15 @@ export default function AdminDashboard() {
     })();
   }, []);
 
+  // New logic: Copy the store link to the clipboard
+  const copyStoreLink = () => {
+    if (!slug) return;
+    const link = `https://t.me/AdwaStoreBuilderBot?startapp=${slug}`;
+    navigator.clipboard.writeText(link);
+    hapticSuccess();
+    alert("Store link copied!"); 
+  };
+
   const cards = [
     { label: t("stats_total_orders"), value: stats?.total_orders ?? 0, tone: "text-gold-200" },
     { label: t("stats_revenue"),      value: stats ? formatETB(stats.revenue_etb, locale) : "—", tone: "gold-text" },
@@ -33,15 +43,20 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Header with Store Link Action */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold gold-text">{t("admin_dashboard")}</h1>
         {slug && (
-          <Link href={`/store/${slug}`} target="_blank" className="text-sm text-gold-200 hover:underline">
-            View storefront ↗
-          </Link>
+          <button 
+            onClick={copyStoreLink}
+            className="text-xs bg-gold-300/10 text-gold-200 px-3 py-1.5 rounded-full border border-gold-300/20 hover:bg-gold-300/20 transition-all"
+          >
+            Copy Store Link
+          </button>
         )}
       </div>
 
+      {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-3">
         {cards.map((c) => (
           <div key={c.label} className="lux-card p-4">
@@ -53,12 +68,19 @@ export default function AdminDashboard() {
         ))}
       </div>
 
+      {/* Quick Actions */}
       <div className="lux-card p-5">
-        <h2 className="font-semibold text-white mb-2">Quick actions</h2>
+        <h2 className="font-semibold text-white mb-4">Quick actions</h2>
         <div className="grid grid-cols-2 gap-3">
-          <Link href="/admin/products" className="btn-ghost">{t("add_product")} →</Link>
-          <Link href="/admin/orders"   className="btn-ghost">{t("admin_orders")} →</Link>
+          <Link href="/admin/products" className="btn-ghost text-center">{t("add_product")}</Link>
+          <Link href="/admin/orders"   className="btn-ghost text-center">{t("admin_orders")}</Link>
         </div>
+        
+        {slug && (
+          <Link href={`/store/${slug}`} target="_blank" className="block mt-3 w-full text-center text-xs text-white/40 hover:text-gold-200 underline">
+            View live storefront preview ↗
+          </Link>
+        )}
       </div>
     </div>
   );
